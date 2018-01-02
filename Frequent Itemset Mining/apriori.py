@@ -1,10 +1,12 @@
+from datetime import datetime
+
 class Apriori():
 
     def __init__(self, dataset):
         self.dataset = dataset
         self.support_data = {}
         self.freq_itemsets = []
-        self.strong_association_rules = []
+        self.t_num = float(len(self.dataset))
 
 
     def __create_C1(self):
@@ -88,15 +90,16 @@ class Apriori():
                         item_count[item] = 1
                     else:
                         item_count[item] += 1
-        t_num = float(len(self.dataset))
+
         for item in item_count:
-            if (item_count[item] / t_num) >= min_sup:
+            if (item_count[item] / self.t_num) >= min_sup:
                 Lk.add(item)
-                self.support_data[item] = item_count[item] / t_num
+                self.support_data[item] = item_count[item] / self.t_num
+
         return Lk
 
 
-    def generate_L(self, k, min_sup):
+    def generate_L(self, min_sup):
         """
         Generate all frequent itemsets.
         Args:
@@ -107,44 +110,41 @@ class Apriori():
             L: The list of Lk.
             support_data: A dictionary. The key is frequent itemset and the value is support.
         """
+        start = datetime.now()
         C1 = self.__create_C1()
+        deltatime = datetime.now() - start
+        create_Ck_time = deltatime.seconds + deltatime.microseconds / 1000000
+        
+        start = datetime.now()
         L1 = self.__generate_Lk_by_Ck(C1, min_sup)
+        deltatime = datetime.now() - start
+        generate_Lk_time = deltatime.seconds + deltatime.microseconds / 1000000
+        
         Lksub1 = L1.copy()
-        print(Lksub1)
         for lk_i in Lksub1:
             self.freq_itemsets.append((lk_i, self.support_data[lk_i]))
-        for i in range(2, k+1):
+        i = 2
+
+        while True:
+            start = datetime.now()
             Ci = self.__create_Ck(Lksub1, i)
+            deltatime = datetime.now() - start
+            create_Ck_time += deltatime.seconds + deltatime.microseconds / 1000000
+
+            start = datetime.now()
             Li = self.__generate_Lk_by_Ck(Ci, min_sup)
+            deltatime = datetime.now() - start
+            generate_Lk_time += deltatime.seconds + deltatime.microseconds / 1000000
+
             Lksub1 = Li.copy()
-            print(Lksub1)
+            
+            if len(Lksub1) == 0:
+                break
             for lk_i in Lksub1:
                 self.freq_itemsets.append((lk_i, self.support_data[lk_i]))
+            i += 1
+        
+        print("Create Ck time (s): ", create_Ck_time)
+        print("Generate Lk time (s): ", generate_Lk_time)
+
         return self.freq_itemsets
-
-
-    def generate_big_rules(self, min_conf):
-        """
-        Generate big rules from frequent itemsets.
-        Args:
-            L: The list of Lk.
-            support_data: A dictionary. The key is frequent itemset and the value is support.
-            min_conf: Minimal confidence.
-        Returns:
-            big_rule_list: A list which contains all big rules. Each big rule is represented
-                        as a 3-tuple.
-        """
-        if self.freq_itemsets is None:
-            return
-
-        sub_set_list = []
-        for freq_set, support in self.freq_itemsets:
-            for sub_set in sub_set_list:
-                if sub_set.issubset(freq_set):
-                    conf = support / self.support_data[freq_set - sub_set]
-                    big_rule = (freq_set - sub_set, sub_set, conf)
-                    if conf >= min_conf and big_rule not in self.strong_association_rules:
-                        # print freq_set-sub_set, " => ", sub_set, "conf: ", conf
-                        self.strong_association_rules.append(big_rule)
-            sub_set_list.append(freq_set)
-        return self.strong_association_rules

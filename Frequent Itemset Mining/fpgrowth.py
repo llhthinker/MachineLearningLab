@@ -20,13 +20,11 @@ class FPTreeNode():
 
 class FPGrowth():
 
-    def __init__(self, dataset, min_sup=0.0, min_conf=0.0):
+    def __init__(self, dataset, min_sup=0.0):
         self.dataset = dataset
         self.min_sup = min_sup
-        self.min_conf = min_conf
         self.freq_L1 = {}  # 1-频繁项
         self.freq_itemsets = []  # 存储每个频繁项及其对应的计数
-        self.strong_association_rules = []  # 存储强关联规则
 
     def __get_frequency(self, trans_records):
         rect = {}
@@ -38,7 +36,7 @@ class FPGrowth():
     def build_fptree(self):
         if self.dataset is None:
             return
-        # 依据销售数量创建item序列
+        # 创建item序列
         self.freq_L1 = self.__get_frequency(self.dataset)
         tmp_list = []
         tmp_list.extend(self.freq_L1.keys())
@@ -73,7 +71,7 @@ class FPGrowth():
             rule.append(header.name)
             rule.extend(post_model)
             # 表头项+后缀模式  构成一条频繁模式（频繁模式内部也是按照F1排序的），频繁度为表头项的计数
-            temp = (rule, header.count)
+            temp = (rule, header.count / data_num)
             self.freq_itemsets.append(temp)
             # 新的后缀模式：表头项+上一次的后缀模式（注意保持顺序，始终按F1的顺序排列）
             new_post_pattern = []
