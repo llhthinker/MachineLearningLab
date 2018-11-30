@@ -14,3 +14,6 @@
 5. [K-Means](./K-Means/kMeans.py)
    - [Report](./K-Means/Report.md)
    - [Blog](https://www.cnblogs.com/llhthinker/p/5494321.html)
+6. [GMM](./GMM/gmm.py)
+   - [Report](./GMM/Report.md)
+
