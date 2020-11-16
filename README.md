@@ -23,3 +23,13 @@
    - [Report](./LinearClassifiers/Report.md)
    - [LMSE](./LinearClassifiers/LMSE.py)
    - [Perceptron](./LinearClassifiers/perceptron.py)
+## Nice blogs
+- 特征工程
+   - [特征工程学习笔记](https://fire15.com/FeatureEngneering)
+   - [特征选择： 卡方检验、F 检验和互信息](https://www.cnblogs.com/massquantity/p/10486904.html)
+- 树模型
+   - [无法进入的领域：树模型的失落](https://toutiao.io/posts/6jwj9n/preview)
+   - [LightGBM算法总结](https://blog.csdn.net/weixin_39807102/article/details/81912566)
+   - [Lightgbm如何处理类别特征？](https://blog.csdn.net/anshuai_aw1/article/details/83275299)
+   
+   
